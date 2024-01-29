@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./styles.css" />
+    <title>Technical Documentation Page- GIT</title>
+</head>
+
+<body>
+    <nav id="navbar">
+        <header>Git Documentation</header>
+        <ul type="none">
+            <li><a class="nav-link" href="#Introduction">Introduction</a></li>
+            <li><a class="nav-link" href="#Repository">Repository</a></li>
+            <li><a class="nav-link" href="#Checkingout">Checkingout</a></li>
+            <li><a class="nav-link" href="#Commits"> Commits</a></li>
+            <li><a class="nav-link" href="#Branches">Branches</a></li>
+        </ul>
+    </nav>
+    <main id="main-doc">
+        <section id="Introduction" class="main-section">
+            <header>Introduction</header>
+            <p>Git is a fast distributed revision control system.
+
+                This manual is designed to be readable by someone with basic UNIX command-line skills, but no previous
+                knowledge of Git.
+
+                Repositories and Branches and Exploring Git history explain how to fetch and study a project using
+                git—​read these chapters to learn how to build and test a particular version of a software project,
+                search for regressions, and so on.</p>
+            <p>Comprehensive reference documentation is available through the man pages, or <strong>git-help[1]</strong>
+                command. For example, for the command <strong> git clone < repo> </strong>, you can either use:</p>
+            <code>$ man git-clone</code>
+            or
+
+            <code>$ git help clone</code>
+        </section>
+
+        <section id="Repository" class="main-section">
+            <header>Repository</header>
+            <article>
+                <p>It will be useful to have a Git repository to experiment with as you read this manual.
+
+                    The best way to get one is by using the <strong>git-clone[1] </strong> command to download a copy of
+                    an existing repository. If you don’t already have a project in mind, here are some interesting
+                    examples:</p>
+                <code># Git itself (approx. 40MB download): 
+          <br/>
+$ git clone git://git.kernel.org/pub/scm/git/git.git
+<br/>
+	# the Linux kernel (approx. 640MB download):
+  <br/>
+$ git clone git://git.kernel.org/pub/scm/linux/<br/>kernel/git/torvalds/linux.git</code>
+                <p>The initial clone may be time-consuming for a large project, but you will only need to clone once.
+
+                    The clone command creates a new directory named after the project (git or linux in the examples
+                    above). After you cd into this directory, you will see that it contains a copy of the project files,
+                    called the working tree, together with a special top-level directory named .git, which contains all
+                    the information about the history of the project.</p>
+            </article>
+        </section>
+
+        <section id="Checkingout" class="main-section">
+            <header>Checkingout</header>
+            <article>
+                <p>Git is best thought of as a tool for storing the history of a collection of files. It stores the
+                    history as a compressed collection of interrelated snapshots of the project’s contents. In Git each
+                    such version is called a commit.
+
+                    Those snapshots aren’t necessarily all arranged in a single line from oldest to newest; instead,
+                    work may simultaneously proceed along parallel lines of development, called branches, which may
+                    merge and diverge.
+
+                    A single Git repository can track development on multiple branches. It does this by keeping a list
+                    of heads which reference the latest commit on each branch; the <strong>git-branch[1]</strong>
+                    command shows you the list of branch heads:</p>
+                <code>$ git branch
+* master</code>
+                <p>A freshly cloned repository contains a single branch head, by default named "master", with the
+                    working directory initialized to the state of the project referred to by that branch head.
+
+                    Most projects also use tags. Tags, like heads, are references into the project’s history, and can be
+                    listed using the <strong> git-tag[1]</strong> command:</p>
+                <code>$ git tag -l</code>
+                <code>
+                    v2.6.11 <br/>
+                    v2.6.11-tree <br/>
+                    v2.6.12 <br/>
+                    v2.6.12-rc2 <br/>
+                    v2.6.12-rc3 <br/>
+                    v2.6.12-rc4 <br/>
+                    v2.6.12-rc5 <br/>
+                    v2.6.12-rc6 <br/>
+                    v2.6.13 <br/>
+                    ...
+                </code>
+            </article>
+        </section>
+
+        <section id="Commits" class="main-section">
+            <header>Commits</header>
+            <article>
+                <p>Every change in the history of a project is represented by a commit. The <strong>git-show[1]</strong>
+                    command shows the most recent commit on the current branch:</p>
+                <code>$ git show</code>
+                <code>
+                    commit 17cf781661e6d38f737f15f53ab552f1e95960d7 <br/>
+                    Author: Linus Torvalds <br/>< torvalds@ppc970.osdl.org.(none)> <br/>
+                    Date:   Tue Apr 19 14:11:06 2005 -0700 <br/>
+                    Remove duplicate getenv(DB_ENVIRONMENT) call <br/>
+                        Noted by Tony Luck. <br/>
+                    diff --git a/init-db.c b/init-db.c
+                    index 65898fa..b002dc6 100644 <br/>
+                    --- a/init-db.c<br/>
+                    +++ b/init-db.c<br/>
+                    @@ -7,7 +7,7 @@<br/>
+                    int main(int argc, char **argv) <br/>
+                    { -	char *sha1_dir = getenv(DB_ENVIRONMENT), *path; <br/>
+                    +	char *sha1_dir, *path; <br/>
+                        int len, i; <br/>
+                        if (mkdir(".git", 0755) < 0) {<br/>
+                    <br/>
+                </code>
+                <p>As you can see, a commit shows who made the latest change, what they did, and why.
+
+                    Every commit has a 40-hexdigit id, sometimes called the "object name" or the "SHA-1 id", shown on
+                    the first line of the git show output. You can usually refer to a commit by a shorter name, such as
+                    a tag or a branch name, but this longer name can also be useful. Most importantly, it is a globally
+                    unique name for this commit: so if you tell somebody else the object name (for example in email),
+                    then you are guaranteed that name will refer to the same commit in their repository that it does in
+                    yours (assuming their repository has that commit at all). Since the object name is computed as a
+                    hash over the contents of the commit, you are guaranteed that the commit can never change without
+                    its name also changing.
+
+                    In fact, in Git concepts we shall see that everything stored in Git history, including file data and
+                    directory contents, is stored in an object with a name that is a hash of its contents.</p>
+            </article>
+        </section>
+
+        <section id="Branches" class="main-section">
+            <header>Branches</header>
+            <article>
+                <p>Creating, deleting, and modifying branches is quick and easy; here’s a summary of the commands:</p>
+                <ul type="none">
+                    <li><code>git branch</code>
+                        <p>list all branches.</p>
+                    </li>
+                    <li>
+                        <code>git branch &#60;branch&#62; </code>
+                        <p>create a new branch named &#60;branch>, referencing the same point in history as the current
+                            branch.</p>
+                    </li>
+                    <li>
+                        <code>git branch &#60;branch> &#60;start-point> </code>
+                        <p>create a new branch named &#60;branch>, referencing &#60;start-point>, which may be specified
+                            any way you like, including using a branch name or a tag name.</p>
+                    </li>
+                    <li>
+                        <code>git branch -d < branch></code>
+                        <p>delete the branch < branch>; if the branch is not fully merged in its upstream branch or
+                                contained in the current branch, this command will fail with a warning.</p>
+                    </li>
+                    <li>
+                        <code>git branch -D < branch></code>
+                        <p>delete the branch < branch> irrespective of its merged status.</p>
+                    </li>
+
+                    <li>
+                        <code>git switch  < branch></code>
+                        <p>make the current branch <branch>, updating the working directory to reflect the version
+                                referenced by < branch>.</p>
+                    </li>
+                    <li>
+                        <code>git switch -c < new> < start-point></code>
+                        <p>create a new branch < new> referencing < start-point>, and check it out.</p>
+                    </li>
+            </article>
+
+        </section>
+    </main>
+</body>
+
+</html>
